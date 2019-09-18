@@ -9,33 +9,37 @@ from pygame.locals import*
 from tkinter import*
 
 # replay window
+
+
 class RepWindow(Frame):
 
-    def __init__(self,master = NONE):
-        Frame.__init__(self,master)
-        self.master =master
+    def __init__(self, master=NONE):
+        Frame.__init__(self, master)
+        self.master = master
         self.init_window()
 
-    #creation of init_window
+    # creation of init_window
     def init_window(self):
 
-        #change title
+        # change title
         self.master.title("Replay Prompt")
 
-        #widget allowed full space
+        # widget allowed full space
         self.pack(fill=BOTH, expand=1)
 
-        #create a button
-        quitButton = Button(self, text = "Quit",command = self.client_exit)
-        replayButton = Button(self, text = "Replay", command = self.replay)
+        # create a button
+        quitButton = Button(self, text="Quit", command=self.client_exit)
+        replayButton = Button(self, text="Replay", command=self.replay)
 
         #placing button
-        quitButton.place(x=40, y =250)
-        replayButton.place(x=260, y = 250)
+        quitButton.place(x=40, y=250)
+        replayButton.place(x=260, y=250)
+
     def client_exit(self):
         exit()
     def replay(self):
         root.destroy()
+
 
 # setup pygame
 pygame.init()
@@ -46,6 +50,7 @@ loseSound = pygame.mixer.Sound('lose.ogg')
 winSound = pygame.mixer.Sound('win.ogg')
 victorySound = pygame.mixer.Sound('victory.ogg')
 bounceSound = pygame.mixer.Sound('bounce.ogg')
+lostSound = pygame.mixer.Sound('long_lose.ogg')
 
 # setup window
 WINDOWWIDTH = 601
@@ -62,6 +67,7 @@ BLUEISH = (148, 171, 220)
 fontname = 'freesansbold.ttf'
 fontsize = 20
 font = pygame.font.Font(fontname, fontsize)
+
 
 # helper function
 def drawnet(win, color, start, end, width=1, length=10):
@@ -92,6 +98,7 @@ def drawnet(win, color, start, end, width=1, length=10):
         end = (round(x2), round(y2))
         pygame.draw.line(surf, color, start, end, width)
 
+
 def printScore():
     antialias = True
     textAI = 'AI'
@@ -100,18 +107,19 @@ def printScore():
     textPlayer = 'Player'
     textPlayerScore = 'Player Score is: ' + str(PLAYERSCORE)
     textPlayerRounds = 'Player rounds won is: ' + str(PLAYERROUNDS)
-    textrenderAI = font.render(textAI,antialias,BLUEISH)
-    textrenderPlayer = font.render(textPlayer,antialias,BLUEISH)
-    textrenderAIScore = font.render(textAIScore,antialias,BLUEISH)
-    textrenderPlayerScore = font.render(textPlayerScore,antialias, BLUEISH)
-    textrenderAIRounds = font.render(textAIRounds, antialias,BLUEISH)
+    textrenderAI = font.render(textAI, antialias, BLUEISH)
+    textrenderPlayer = font.render(textPlayer, antialias, BLUEISH)
+    textrenderAIScore = font.render(textAIScore, antialias, BLUEISH)
+    textrenderPlayerScore = font.render(textPlayerScore, antialias, BLUEISH)
+    textrenderAIRounds = font.render(textAIRounds, antialias, BLUEISH)
     textrenderPlayerRounds = font.render(textPlayerRounds, antialias, BLUEISH)
-    window.blit(textrenderAI, (50,50))
+    window.blit(textrenderAI, (50, 50))
     window.blit(textrenderAIScore, (50, 100))
     window.blit(textrenderAIRounds, (50, 150))
-    window.blit(textrenderPlayer, (302,50))
-    window.blit(textrenderPlayerScore, (302,100))
-    window.blit(textrenderPlayerRounds, (302,150))
+    window.blit(textrenderPlayer, (302, 50))
+    window.blit(textrenderPlayerScore, (302, 100))
+    window.blit(textrenderPlayerRounds, (302, 150))
+
 
 # setup paddles
 PADWIDTH = 100
@@ -136,7 +144,8 @@ PLAYERROUNDS = 0
 WIN = False
 LOSE = False
 
-#new game reset
+
+# new game reset
 def fullreset():
     global WIN
     WIN = False
@@ -145,11 +154,12 @@ def fullreset():
     global AISCORE
     AISCORE = 0
     global PLAYERSCORE
-    PLAYERSCORE= 0
+    PLAYERSCORE = 0
     global AIROUNDS
-    AIROUNDS= 0
+    AIROUNDS = 0
     global PLAYERROUNDS
-    PLAYERROUNDS= 0
+    PLAYERROUNDS = 0
+
 
 # setup direction variables
 DOWNLEFT = 'downleft'
@@ -164,6 +174,7 @@ BALLPOSX = WINDOWWIDTH//2 - 20
 BALLPOSY = WINDOWHEIGHT//2 - 20
 BALLPOS = [BALLPOSX, BALLPOSY]
 POINTS = 90
+
 
 class Ball:
     # create a list of points for the ball
@@ -227,6 +238,7 @@ class Ball:
         cls.ballPointList = []
         for x in range(0, POINTS):
             cls.ballPointList.append([(BALLPOS[0] + (20*math.cos(x))), (BALLPOS[1] + (20*math.sin(x)))])
+
 
 ballImg = pygame.image.load('ball.png')
 ballImg = pygame.transform.scale(ballImg, (40, 40))
@@ -297,7 +309,7 @@ while True:
     # ai moves paddle
     AISPEED = 1
     if padAI1.midright[1] < BALLPOS[1]:
-        padAI1.bottom +=AISPEED
+        padAI1.bottom += AISPEED
     if padAI1.midright[1] > BALLPOS[1]:
         padAI1.bottom -= AISPEED
     if (padAI2.midbottom[0] < BALLPOS[0]) and (padAI2.right < WINDOWWIDTH//2):
@@ -333,6 +345,7 @@ while True:
             WIN = True
         elif AIROUNDS == 3:
             LOSE = True
+            lostSound.play()
         ball.reset()
         ballDir = random.choice(DirList)
         BALLSPEED = random.choice(SpeedList)
@@ -357,6 +370,7 @@ while True:
             WIN = True
         elif AIROUNDS == 3:
             LOSE = True
+            lostSound.play()
         ball.reset()
         ballDir = random.choice(DirList)
         BALLSPEED = random.choice(SpeedList)
@@ -381,6 +395,7 @@ while True:
             WIN = True
         elif AIROUNDS == 3:
             LOSE = True
+            lostSound.play()
         ball.reset()
         ballDir = random.choice(DirList)
         BALLSPEED = random.choice(SpeedList)
@@ -405,6 +420,7 @@ while True:
             victorySound.play()
         elif AIROUNDS == 3:
             LOSE = True
+            lostSound.play()
         ball.reset()
         ballDir = random.choice(DirList)
         BALLSPEED = random.choice(SpeedList)
@@ -418,23 +434,22 @@ while True:
         if WIN:
             app = Label(root, text='You won, would you like to play again?')
         if LOSE:
-            app = Label(root,text ='You lost, would you like to play again?')
+            app = Label(root, text='You lost, would you like to play again?')
         app.pack()
         fullreset()
         root.mainloop()
 
-
     # ball hits paddle
     ball.ballpoints()
-    for x in range(0,POINTS):
+    for x in range(0, POINTS):
         if padPlayer1.collidepoint(ball.ballPointList[x]):
             ball.ballVecX *= -1
             bounceSound.play()
-    for x in range(0,POINTS):
+    for x in range(0, POINTS):
         if padPlayer2.collidepoint(ball.ballPointList[x]):
             ball.ballVecY *= -1
             bounceSound.play()
-    for x in range(0,POINTS):
+    for x in range(0, POINTS):
         if padPlayer3.collidepoint(ball.ballPointList[x]):
             ball.ballVecY *= -1
             bounceSound.play()
