@@ -57,23 +57,24 @@ pygame.display.set_caption('Pong_No_Wall')
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 BLUEISH = (148, 171, 220)
+
 # setup font
 fontname = 'freesansbold.ttf'
 fontsize = 20
 font = pygame.font.Font(fontname, fontsize)
 
 # helper function
-def draw_dashed_line(surf, color, start_pos, end_pos, width=1, dash_length=10):
-    x1, y1 = start_pos
-    x2, y2 = end_pos
-    dl = dash_length
+def drawnet(win, color, start, end, width=1, length=10):
+    x1, y1 = start
+    x2, y2 = end
+    dl = length
 
     if x1 == x2:
-        ycoords = [y for y in range(y1, y2, dl if y1 < y2 else -dl)]
-        xcoords = [x1] * len(ycoords)
+        ycord = [y for y in range(y1, y2, dl if y1 < y2 else -dl)]
+        xcord = [x1] * len(ycord)
     elif y1 == y2:
-        xcoords = [x for x in range(x1, x2, dl if x1 < x2 else -dl)]
-        ycoords = [y1] * len(xcoords)
+        xcord = [x for x in range(x1, x2, dl if x1 < x2 else -dl)]
+        ycord = [y1] * len(xcord)
     else:
         a = abs(x2 - x1)
         b = abs(y2 - y1)
@@ -81,8 +82,8 @@ def draw_dashed_line(surf, color, start_pos, end_pos, width=1, dash_length=10):
         dx = dl * a / c
         dy = dl * b / c
 
-        xcoords = [x for x in numpy.arange(x1, x2, dx if x1 < x2 else -dx)]
-        ycoords = [y for y in numpy.arange(y1, y2, dy if y1 < y2 else -dy)]
+        xcord = [x for x in numpy.arange(x1, x2, dx if x1 < x2 else -dx)]
+        ycord = [y for y in numpy.arange(y1, y2, dy if y1 < y2 else -dy)]
 
     next_coords = list(zip(xcoords[1::2], ycoords[1::2]))
     last_coords = list(zip(xcoords[0::2], ycoords[0::2]))
@@ -135,6 +136,7 @@ PLAYERROUNDS = 0
 WIN = False
 LOSE = False
 
+#new game reset
 def fullreset():
     global WIN
     WIN = False
@@ -157,7 +159,6 @@ UPRIGHT = 'upright'
 DirList = [DOWNLEFT, DOWNRIGHT, UPLEFT, UPRIGHT]
 ballDir = random.choice(DirList)
 SpeedList = [2, 3, 4, 5, 10]
-print(ballDir)
 BALLSPEED = random.choice(SpeedList)
 BALLPOSX = WINDOWWIDTH//2 - 20
 BALLPOSY = WINDOWHEIGHT//2 - 20
@@ -169,9 +170,6 @@ class Ball:
     ballPointList = []
     for x in range(0, POINTS):
         ballPointList.append([(BALLPOS[0] + (20*math.cos(x))), (BALLPOS[1] + (20*math.sin(x)))])
-    #for x in range(0, POINTS):
-     #   print(ballPointList[x])
-
 
     @classmethod
     def drawcircle(cls):
@@ -229,9 +227,6 @@ class Ball:
         cls.ballPointList = []
         for x in range(0, POINTS):
             cls.ballPointList.append([(BALLPOS[0] + (20*math.cos(x))), (BALLPOS[1] + (20*math.sin(x)))])
-        #for x in range(0, POINTS):
-         #   print(cls.ballPointList[x])
-
 
 ballImg = pygame.image.load('ball.png')
 ballImg = pygame.transform.scale(ballImg, (40, 40))
@@ -285,7 +280,7 @@ while True:
 
     # draw black background and lines
     window.fill(BLACK)
-    draw_dashed_line(window, WHITE, (WINDOWWIDTH//2+1, 0), (WINDOWWIDTH//2+1, WINDOWHEIGHT), dash_length=20)
+    drawnet(window, WHITE, (WINDOWWIDTH//2+1, 0), (WINDOWWIDTH//2+1, WINDOWHEIGHT), length=20)
 
     # move the paddles
     if moveDown and padPlayer1.bottom < WINDOWHEIGHT:
@@ -321,10 +316,8 @@ while True:
     if ball.top < 0:
         if WINDOWWIDTH//2+1 > BALLPOS[0]:
             PLAYERSCORE += 1
-            print(PLAYERSCORE)
         else:
             AISCORE += 1
-            print(AISCORE)
         if (PLAYERSCORE >= 11) and (PLAYERSCORE - AISCORE >= 2):
             winSound.play()
             PLAYERROUNDS += 1
@@ -347,10 +340,8 @@ while True:
     if ball.bottom > WINDOWHEIGHT:
         if WINDOWWIDTH//2+1 > BALLPOS[0]:
             PLAYERSCORE += 1
-            print(PLAYERSCORE)
         else:
             AISCORE += 1
-            print(AISCORE)
         if (PLAYERSCORE >= 11) and (PLAYERSCORE - AISCORE >= 2):
             winSound.play()
             PLAYERROUNDS += 1
@@ -373,10 +364,8 @@ while True:
     if ball.left < 0:
         if WINDOWWIDTH//2+1 > BALLPOS[0]:
             PLAYERSCORE += 1
-            print(PLAYERSCORE)
         else:
             AISCORE += 1
-            print(AISCORE)
         if (PLAYERSCORE >= 11) and (PLAYERSCORE - AISCORE >= 2):
             winSound.play()
             PLAYERROUNDS += 1
@@ -399,10 +388,8 @@ while True:
     if ball.right > WINDOWWIDTH:
         if WINDOWWIDTH // 2 + 1 > BALLPOS[0]:
             PLAYERSCORE += 1
-            print(PLAYERSCORE)
         else:
             AISCORE += 1
-            print(AISCORE)
         if (PLAYERSCORE >= 11) and (PLAYERSCORE - AISCORE >= 2):
             PLAYERROUNDS += 1
             winSound.play()
@@ -425,7 +412,6 @@ while True:
 
     # replay prompt
     if WIN or LOSE:
-        print('play again?')
         root = Tk()
         root.geometry("400x300")
         app = RepWindow(root)
